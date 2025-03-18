@@ -9,7 +9,7 @@ import (
 )
 
 // JWT key
-const jwtKey = []byte("ChangeMe")
+const jwtKey = "ChangeMe"
 
 // Hash password with bcrupt
 func HashPassword(password string) (string, error) {
@@ -25,7 +25,7 @@ func CheckPassword(password, hash string) bool {
 
 // Generate a JWY
 func GenerateJWT(userID uuid.UUID) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwtKey.MapClaims{
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id": userID.String(),
 		"exp":     time.Now().Add(72 * time.Hour).Unix(),
 	})

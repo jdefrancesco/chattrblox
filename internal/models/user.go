@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// User struct holds information of registered users.
 type User struct {
 	ID           uuid.UUID `gorm:"type:uuid;primaryKey"`
 	Email        string    `gorm:"unique;not null"`
