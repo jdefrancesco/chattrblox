@@ -4,6 +4,7 @@ import (
 	"chatrblox/internal/auth"
 	"chatrblox/internal/middleware"
 	"chatrblox/internal/models"
+	"chatrblox/internal/ws"
 	"fmt"
 	"log"
 	"net/http"
@@ -11,6 +12,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	chiMid "github.com/go-chi/chi/v5/middleware"
+	"github.com/go-redis/redis/v8"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -18,6 +20,11 @@ import (
 func main() {
 	// Grab postgresql URL
 	dbUrl := os.Getenv("DATABASE_URL")
+	// Get port from environment. Default to 8080 is missing.
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
 
 	db, err := gorm.Open(postgres.Open(dbUrl), &gorm.Config{})
 	if err != nil {
@@ -28,6 +35,13 @@ func main() {
 	if err := db.AutoMigrate(&models.User{}, &models.Report{}, &models.Session{}); err != nil {
 		log.Fatalf("failed to migrate: %v", err)
 	}
+
+	// Setup Redis. Matchmaking primarily relies on it.
+	redisClient := redis.NewClient(&redis.Options{
+		Addr: "localhost:6379",
+	})
+	matchmaker := ws.NewMatchmaker(redisClient)
+	hub := &ws.Hub{Matchmaker: matchmaker}
 
 	// Setup chi router.
 	r := chi.NewRouter()
@@ -46,10 +60,11 @@ func main() {
 		})
 	})
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
+	// Middleware. Handles Authentication, matchmaking, etc..
+	r.Group(func(r chi.Router) {
+		r.Use(middleware.JWTAuth)
+		r.Get("/ws", hub.HandleWS)
+	})
 
 	fmt.Printf("[*] Started server. Listening on port %s\n", port)
 	log.Fatal(http.ListenAndServe(":"+port, r))

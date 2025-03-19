@@ -1,3 +1,4 @@
 TODO:
 
-Match making logic is next up..
+* Frontend code for WebRTC signaling
+* Timeout/reconnect handling will be added afterwards.
