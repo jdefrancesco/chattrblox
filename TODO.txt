@@ -1,4 +1,6 @@
 TODO:
 
-* Frontend code for WebRTC signaling
-* Timeout/reconnect handling will be added afterwards.
+[!] Bookmark.. Left up on step 17 of milestones... Dumb frontend stuff
+* Test frontend webrtc.
+* Timeout/reconnect handling will be added afterwards. Get MVP up first
+h

@@ -12,6 +12,7 @@ type User struct {
 	ID           uuid.UUID `gorm:"type:uuid;primaryKey"`
 	Email        string    `gorm:"unique;not null"`
 	PasswordHash string    `gorm:"not null"`
+	IsAdmin      bool      `gorm:"default:false"`
 	CreatedAt    time.Time
 	LastLoginAt  *time.Time
 }

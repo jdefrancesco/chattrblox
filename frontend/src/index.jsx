@@ -1,0 +1,1 @@
+<div className="bg-red-500 p-2 text-white">If you see red, Tailwind works </div>

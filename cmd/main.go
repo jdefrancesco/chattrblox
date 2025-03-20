@@ -40,7 +40,10 @@ func main() {
 	redisClient := redis.NewClient(&redis.Options{
 		Addr: "localhost:6379",
 	})
+
+	// Match making subsystem init..
 	matchmaker := ws.NewMatchmaker(redisClient)
+	matchmaker.DB = db
 	hub := &ws.Hub{Matchmaker: matchmaker}
 
 	// Setup chi router.
@@ -48,6 +51,8 @@ func main() {
 	r.Use(chiMid.Logger)
 
 	authHandler := &auth.AuthHandler{DB: db}
+
+	// Endpoints for registering and login.
 	r.Post("/api/register", authHandler.Register)
 	r.Post("/api/login", authHandler.Login)
 

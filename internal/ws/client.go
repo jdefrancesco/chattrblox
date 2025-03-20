@@ -1,6 +1,9 @@
 package ws
 
 import (
+	"chatrblox/internal/models"
+	"log"
+
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 )
@@ -34,6 +37,8 @@ func (c *Client) ReadLoop() {
 			c.relayToPartner(msg)
 		case "disconnect":
 			c.handleDisconnect()
+		case "report":
+			c.handleReport(msg)
 		}
 	}
 }
@@ -63,9 +68,40 @@ func (c *Client) relayToPartner(msg Message) {
 	}
 }
 
-// Handle disconnect.
+// Gracefully handle disconnection.
 func (c *Client) handleDisconnect() {
-	// Remove user from matchmaking pool and notify partner
-	delete(c.Hub.Matchmaker.Clients, c.ID)
-	c.Conn.Close()
+	partnerID := findPartnerID(c) // implement mapping if needed
+
+	if partnerID != uuid.Nil {
+		partner := c.Hub.Matchmaker.Clients[partnerID]
+		if partner != nil {
+			partner.SendCh <- Message{
+				Type: "disconnect",
+				Data: "partner left",
+			}
+			// Requeue the partner
+			c.Hub.Matchmaker.Enqueue(partner)
+		}
+	}
+
+	// Requeue the current user
+	c.Hub.Matchmaker.Enqueue(c)
+}
+
+// Handle report button.
+func (c *Client) handleReport(msg Message) {
+	reportedID, err := uuid.Parse(msg.To)
+	if err != nil {
+		return
+	}
+
+	report := models.Report{
+		ReporterID: c.ID,
+		ReportedID: reportedID,
+		Reason:     msg.Data,
+	}
+
+	if err := c.Hub.Matchmaker.DB.Create(&report).Error; err != nil {
+		log.Println("Failed to log report:", err)
+	}
 }
