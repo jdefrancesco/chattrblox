@@ -18,11 +18,15 @@ import (
 )
 
 func main() {
-	// Grab postgresql URL
+	// Grab DB (Postgres) URL
 	dbUrl := os.Getenv("DATABASE_URL")
+	if dbUrl == "" {
+		log.Fatalln("Set DATABASE_URL environment variable.")
+	}
 	// Get port from environment. Default to 8080 is missing.
 	port := os.Getenv("PORT")
 	if port == "" {
+		log.Println("Setting to default port 8080")
 		port = "8080"
 	}
 
@@ -56,7 +60,7 @@ func main() {
 	r.Post("/api/register", authHandler.Register)
 	r.Post("/api/login", authHandler.Login)
 
-	// Protected API routes.
+	// Protected API routes. Using to test JWT are working.
 	r.Group(func(r chi.Router) {
 		r.Use(middleware.JWTAuth)
 		r.Get("/api/protected", func(w http.ResponseWriter, r *http.Request) {

@@ -11,7 +11,7 @@ import (
 // JWT key
 const jwtKey = "ChangeMe"
 
-// Hash password with bcrupt
+// Hash password with bcrypt
 func HashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 
@@ -23,7 +23,7 @@ func CheckPassword(password, hash string) bool {
 	return bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)) == nil
 }
 
-// Generate a JWY
+// Generate a JWT
 func GenerateJWT(userID uuid.UUID) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user_id": userID.String(),

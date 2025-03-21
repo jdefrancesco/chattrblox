@@ -9,8 +9,8 @@ import (
 	"gorm.io/gorm"
 )
 
-// Matchmaker struct has necesarry data to track active users.
-// It relies om Redis for a fast datastore.
+// Matchmaker struct has necessary data to track active users.
+// It relies on Redis for a fast datastore.
 type Matchmaker struct {
 	Redis    *redis.Client
 	QueueKey string
@@ -32,6 +32,13 @@ func (m *Matchmaker) Enqueue(client *Client) {
 	m.Redis.LPush(context.Background(), m.QueueKey, client.ID.String())
 
 	m.TryMatch()
+}
+func (m *Matchmaker) FindPartnerID(id uuid.UUID) uuid.UUID {
+	partnerID, ok := m.Sessions[id]
+	if ok {
+		return partnerID
+	}
+	return uuid.Nil
 }
 
 func (m *Matchmaker) TryMatch() {

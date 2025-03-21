@@ -1,6 +1,5 @@
-TODO:
+# TODO:
 
-[!] Bookmark.. Left up on step 17 of milestones... Dumb frontend stuff
-* Test frontend webrtc.
+1. Setup dev server script
+2. Test frontend webrtc.
 * Timeout/reconnect handling will be added afterwards. Get MVP up first
-h

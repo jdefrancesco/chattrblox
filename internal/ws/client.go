@@ -43,7 +43,7 @@ func (c *Client) ReadLoop() {
 	}
 }
 
-// Semd JSON msg.
+// Send JSON msg.
 func (c *Client) WriteLoop() {
 	defer c.Conn.Close()
 	for msg := range c.SendCh {
@@ -70,7 +70,7 @@ func (c *Client) relayToPartner(msg Message) {
 
 // Gracefully handle disconnection.
 func (c *Client) handleDisconnect() {
-	partnerID := findPartnerID(c) // implement mapping if needed
+	partnerID := c.Hub.Matchmaker.FindPartnerID(c.ID)
 
 	if partnerID != uuid.Nil {
 		partner := c.Hub.Matchmaker.Clients[partnerID]
@@ -79,13 +79,14 @@ func (c *Client) handleDisconnect() {
 				Type: "disconnect",
 				Data: "partner left",
 			}
-			// Requeue the partner
+			// Re-queue the partner
 			c.Hub.Matchmaker.Enqueue(partner)
 		}
 	}
 
-	// Requeue the current user
-	c.Hub.Matchmaker.Enqueue(c)
+	// Cleanup session entry.
+	delete(c.Hub.Matchmaker.Sessions, c.ID)
+	delete(c.Hub.Matchmaker.Sessions, partnerID)
 }
 
 // Handle report button.

@@ -144,10 +144,11 @@ const ChatRoom = ({ jwtToken }) => {
 
   // Add chatroom element on page. Next and Report buttons right after it.
   return (
+    <>
     <div className="chatroom-container">
         <div className="chatroom">
-        <video ref={localVideo} autoPlay muted />
-        <video ref={remoteVideo} autoPlay />
+          <video ref={localVideo} autoPlay muted />
+          <video ref={remoteVideo} autoPlay />
         </div>
 
         <div className="flex flex-col space-y-2 mt-4">
@@ -193,6 +194,7 @@ const ChatRoom = ({ jwtToken }) => {
         </div>
       </div>
     </div>
+    </>
   )
 }
 

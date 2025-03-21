@@ -52,7 +52,7 @@ func TestLogin(t *testing.T) {
 	db := setupTestDB(t)
 	handler := &AuthHandler{DB: db}
 
-	// manually create user
+	// Manually create user
 	user := models.User{
 		Email:        "login@example.com",
 		PasswordHash: "$2a$14$RpS8Zta3tZptQqpFtGeIvuJh0i2d6gLQF3rptCrRfhYydgic4N1rS", // "secret"
