@@ -1,1 +1,10 @@
-<div className="bg-red-500 p-2 text-white">If you see red, Tailwind works </div>
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import './index.css'
+import ChatRoom from './ChatRoom'
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <ChatRoom jwtToken={"example-jwt"} />
+  </React.StrictMode>
+)
