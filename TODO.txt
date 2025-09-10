@@ -1,5 +1,5 @@
 # TODO:
 
 1. Setup dev server script
-2. Test frontend webrtc.
-* Timeout/reconnect handling will be added afterwards. Get MVP up first
+2. Test frontend WebRTC.
+3. Timeout/reconnect handling will be added afterwards. Get MVP up first

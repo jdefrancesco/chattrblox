@@ -40,12 +40,12 @@ func main() {
 		log.Fatalf("failed to migrate: %v", err)
 	}
 
-	// Setup Redis. Matchmaking primarily relies on it.
+	// Setup Redis. Matchmaking and other subsystems rely on this.
 	redisClient := redis.NewClient(&redis.Options{
 		Addr: "localhost:6379",
 	})
 
-	// Match making subsystem init..
+	// Match making subsystem init.
 	matchmaker := ws.NewMatchmaker(redisClient)
 	matchmaker.DB = db
 	hub := &ws.Hub{Matchmaker: matchmaker}
@@ -69,7 +69,7 @@ func main() {
 		})
 	})
 
-	// Middleware. Handles Authentication, matchmaking, etc..
+	// Middleware. Handles Authentication, etc..
 	r.Group(func(r chi.Router) {
 		r.Use(middleware.JWTAuth)
 		r.Get("/ws", hub.HandleWS)
